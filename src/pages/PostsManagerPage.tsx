@@ -38,7 +38,7 @@ type Post = {
   userId: number;
   author: User;
 };
-type NewPost = Omit<Post, "id" | "tags" | "reactions" | "author">;
+type NewPost = Pick<Post, "title" | "body" | "userId">;
 
 type Tag = {
   url: string;

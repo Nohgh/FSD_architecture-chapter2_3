@@ -58,24 +58,27 @@ type Commnent = {
 
 type NewComment = Pick<Commnent, "body" | "postId" | "userId">;
 
+type Address = {
+  address: string;
+  city: string;
+  state: string;
+};
+
+type Company = {
+  name: string;
+  title: string;
+};
 type User = {
   id: number;
-  image: string;
+  age?: number;
+  email?: number;
   username: string;
   firstName?: string;
   lastName?: string;
-  age?: number;
-  email?: number;
+  image: string;
   phone?: string;
-  address?: {
-    address: string;
-    city: string;
-    state: string;
-  };
-  company?: {
-    name: string;
-    title: string;
-  };
+  address?: Address;
+  company?: Company;
 };
 
 const PostsManager = () => {

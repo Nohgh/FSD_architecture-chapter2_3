@@ -38,6 +38,7 @@ type Post = {
   userId: number;
   author: User;
 };
+
 type NewPost = Pick<Post, "title" | "body" | "userId">;
 
 type Tag = {
@@ -68,6 +69,7 @@ type Company = {
   name: string;
   title: string;
 };
+
 type User = {
   id: number;
   age?: number;
@@ -86,32 +88,54 @@ const PostsManager = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
 
-  // 상태 관리
-
+  //TODO: 상태 관리
+  // 게시글
   const [posts, setPosts] = useState<Post[]>([]);
+  // 게시글의 개수
   const [total, setTotal] = useState(0);
+  // 다음을 클릭한 횟수
   const [skip, setSkip] = useState(parseInt(queryParams.get("skip") || "0"));
+  // 페이지에 보여주는 post개수
   const [limit, setLimit] = useState(parseInt(queryParams.get("limit") || "10"));
+  // 검색 쿼리(결과)
   const [searchQuery, setSearchQuery] = useState(queryParams.get("search") || "");
+  // 선택한 포스트
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+  // 정렬기준
   const [sortBy, setSortBy] = useState(queryParams.get("sortBy") || "");
+  // 정렬 순서
   const [sortOrder, setSortOrder] = useState(queryParams.get("sortOrder") || "asc");
+  // 게시물 추가 대화상자
   const [showAddDialog, setShowAddDialog] = useState(false);
+  // 게시물 수정 대화상자
   const [showEditDialog, setShowEditDialog] = useState(false);
+  // 새 게시글 추가
   const [newPost, setNewPost] = useState<NewPost>({ title: "", body: "", userId: 1 });
+  // 로딩 상태 -> 게시물 테이블 렌더링 여부
   const [loading, setLoading] = useState(false);
+  // 태그
   const [tags, setTags] = useState<Tag[]>([]);
+  // 선택된 태그
   const [selectedTag, setSelectedTag] = useState(queryParams.get("tag") || "");
+  // 댓글
   const [comments, setComments] = useState<{ [key: Post["id"]]: Commnent[] }>({});
+  // 선택한 댓글 (댓글 수정 대화상자 에서 사용)
   const [selectedComment, setSelectedComment] = useState<Commnent | null>(null);
+  // 새 댓글 (새댓글 추가에서 추가된)
   const [newComment, setNewComment] = useState<NewComment>({ body: "", postId: null, userId: 1 });
+  // 댓글 추가 대화상자
   const [showAddCommentDialog, setShowAddCommentDialog] = useState(false);
+  // 댓글 수정 대화상자
   const [showEditCommentDialog, setShowEditCommentDialog] = useState(false);
+  // 게시물 상세 보기 대화상자
   const [showPostDetailDialog, setShowPostDetailDialog] = useState(false);
+  // 유저 모달
   const [showUserModal, setShowUserModal] = useState(false);
+  // 선택된 사용자 (유저 모달에서 사용)
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
-  // URL 업데이트 함수
+  //TODO: Function
+  // URL 업데이트 함수 (useEffect[skip,...],태그 선택시 실행)
   const updateURL = () => {
     const params = new URLSearchParams();
     if (skip) params.set("skip", skip.toString());
@@ -123,7 +147,7 @@ const PostsManager = () => {
     navigate(`?${params.toString()}`);
   };
 
-  // 게시물 가져오기
+  // 게시물 가져오기 (검색결과, 선택된 태그,태그가 전체일때 실행 )
   const fetchPosts = () => {
     setLoading(true);
     let postsData: { posts: Post[]; total: number };
@@ -156,7 +180,7 @@ const PostsManager = () => {
       });
   };
 
-  // 태그 가져오기
+  // 태그 가져오기 (앱 렌더링시 useEffect로 인해 실행)
   const fetchTags = async () => {
     try {
       const response = await fetch("/api/posts/tags");
@@ -185,7 +209,7 @@ const PostsManager = () => {
     setLoading(false);
   };
 
-  // 태그별 게시물 가져오기
+  // 태그별 게시물 가져오기 (태그 선택시 실행)
   const fetchPostsByTag = async (tag: Post["tags"][number]) => {
     if (!tag || tag === "all") {
       fetchPosts();
@@ -230,7 +254,7 @@ const PostsManager = () => {
     }
   };
 
-  // 게시물 업데이트
+  // 게시물 업데이트 (게시물 수정 대화상자에서 게시물 업데이트)
   const updatePost = async () => {
     try {
       const response = await fetch(`/api/posts/${selectedPost?.id}`, {
@@ -246,7 +270,7 @@ const PostsManager = () => {
     }
   };
 
-  // 게시물 삭제
+  // 게시물 삭제 (삭제버튼 클릭시)
   const deletePost = async (id: number) => {
     try {
       await fetch(`/api/posts/${id}`, {
@@ -258,7 +282,7 @@ const PostsManager = () => {
     }
   };
 
-  // 댓글 가져오기
+  // 댓글 가져오기 (게시글 상세보기에서 실행 (이거는 메세지버튼에서 실행))
   const fetchComments = async (postId: number) => {
     if (comments[postId]) return; // 이미 불러온 댓글이 있으면 다시 불러오지 않음
     try {
@@ -270,7 +294,7 @@ const PostsManager = () => {
     }
   };
 
-  // 댓글 추가
+  // 댓글 추가 (댓글추가 대화상자에서 실행)
   const addComment = async () => {
     try {
       const response = await fetch("/api/comments/add", {
@@ -290,7 +314,7 @@ const PostsManager = () => {
     }
   };
 
-  // 댓글 업데이트
+  // 댓글 업데이트 (댓글 수정 대화상자)
   const updateComment = async () => {
     try {
       const response = await fetch(`/api/comments/${selectedComment?.id}`, {
@@ -309,7 +333,7 @@ const PostsManager = () => {
     }
   };
 
-  // 댓글 삭제
+  // 댓글 삭제 (게시물 상세 보기 대화상자->renderComments->댓글 삭제)
   const deleteComment = async (id: number, postId: number) => {
     try {
       await fetch(`/api/comments/${id}`, {
@@ -324,7 +348,7 @@ const PostsManager = () => {
     }
   };
 
-  // 댓글 좋아요
+  // 댓글 좋아요 (댓글에서 볼 수 있음 (renderComments))
   const likeComment = async (id: Commnent["id"], postId: Post["id"]) => {
     const targetComment = comments[postId].find((c) => c.id === id);
     if (!targetComment) return;
@@ -366,20 +390,25 @@ const PostsManager = () => {
     }
   };
   //계층별로 뭘 만들지를 구두로 정리, 하고 진행하면 도움이 된다.
-  //참조
+
+  //TODO:참조
   useEffect(() => {
     fetchTags();
   }, []);
 
+  //태그 선택 여부에 따라, 태그별 게시물 가져오기,게시물 가져오기를 수행합니다. 또한 URL을 업데이트 합니다.
   useEffect(() => {
+    console.log("skip,limit", skip, limit);
     if (selectedTag) {
       fetchPostsByTag(selectedTag);
     } else {
       fetchPosts();
     }
     updateURL();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [skip, limit, sortBy, sortOrder, selectedTag]);
 
+  //location이 바뀌면 초기화
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     setSkip(parseInt(params.get("skip") || "0"));
@@ -390,7 +419,7 @@ const PostsManager = () => {
     setSelectedTag(params.get("tag") || "");
   }, [location.search]);
 
-  // 하이라이트 함수 추가
+  // 하이라이트 함수
   const highlightText = (text: string, highlight: string) => {
     if (!text) return null;
     if (!highlight.trim()) {
@@ -405,7 +434,7 @@ const PostsManager = () => {
     );
   };
 
-  // 게시물 테이블 렌더링
+  // 게시물 테이블 렌더링 (로딩 여부에 따라 실행)
   const renderPostTable = () => (
     <Table>
       <TableHeader>
@@ -485,7 +514,7 @@ const PostsManager = () => {
     </Table>
   );
 
-  // 댓글 렌더링
+  // 댓글 렌더링 (게시물 상세 보기 대화상자에서 렌더링)
   const renderComments = (postId: Post["id"]) => (
     <div className="mt-2">
       <div className="flex items-center justify-between mb-2">

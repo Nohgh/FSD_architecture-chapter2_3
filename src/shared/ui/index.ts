@@ -5,3 +5,5 @@ export * from "./Input";
 export * from "./Select";
 export * from "./Table";
 export * from "./TextArea";
+export * from "./Header.tsx";
+export * from "./Footer.tsx";

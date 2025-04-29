@@ -561,7 +561,8 @@ const PostsManager = () => {
       </div>
     </div>
   );
-
+  //widget->재사용가능한 복잡한 ui블록 props없게, read만 남겨두기
+  //헤더 푸터 -> comment,post,___
   return (
     <Card className="w-full max-w-6xl mx-auto">
       <CardHeader>

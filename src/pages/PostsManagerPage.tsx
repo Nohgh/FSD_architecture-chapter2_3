@@ -25,6 +25,7 @@ import {
   TableRow,
   Textarea,
 } from "../shared/ui";
+import { Modal } from "../shared/ui/Modal";
 
 type Post = {
   id: number;
@@ -561,8 +562,7 @@ const PostsManager = () => {
       </div>
     </div>
   );
-  //widget->재사용가능한 복잡한 ui블록 props없게, read만 남겨두기
-  //헤더 푸터 -> comment,post,___
+
   return (
     <Card className="w-full max-w-6xl mx-auto">
       <CardHeader>
@@ -662,6 +662,10 @@ const PostsManager = () => {
           </div>
         </div>
       </CardContent>
+      {/* widgets/comment/ui/modal/postAdd,Edit */}
+      {/* widgets/modal/post,comment,user */}
+      {/* feature/showModal/ui/post */}
+      {/* feature/showModal/ui/user */}
 
       {/* 게시물 추가 대화상자 */}
       <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
@@ -763,7 +767,7 @@ const PostsManager = () => {
       </Dialog>
 
       {/* 사용자 모달 */}
-      <Dialog open={showUserModal} onOpenChange={setShowUserModal}>
+      {/* <Dialog open={showUserModal} onOpenChange={setShowUserModal}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>사용자 정보</DialogTitle>
@@ -794,7 +798,34 @@ const PostsManager = () => {
             </div>
           </div>
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
+      <Modal open={showUserModal} onOpenChange={setShowUserModal} title="사용자 정보">
+        <>
+          <img src={selectedUser?.image} alt={selectedUser?.username} className="w-24 h-24 rounded-full mx-auto" />
+          <h3 className="text-xl font-semibold text-center">{selectedUser?.username}</h3>
+          <div className="space-y-2">
+            <p>
+              <strong>이름:</strong> {selectedUser?.firstName} {selectedUser?.lastName}
+            </p>
+            <p>
+              <strong>나이:</strong> {selectedUser?.age}
+            </p>
+            <p>
+              <strong>이메일:</strong> {selectedUser?.email}
+            </p>
+            <p>
+              <strong>전화번호:</strong> {selectedUser?.phone}
+            </p>
+            <p>
+              <strong>주소:</strong> {selectedUser?.address?.address}, {selectedUser?.address?.city},{" "}
+              {selectedUser?.address?.state}
+            </p>
+            <p>
+              <strong>직장:</strong> {selectedUser?.company?.name} - {selectedUser?.company?.title}
+            </p>
+          </div>
+        </>
+      </Modal>
     </Card>
   );
 };

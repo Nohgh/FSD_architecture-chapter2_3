@@ -40,6 +40,7 @@ import {
 } from "@/entities/post/api";
 import { Tag } from "@/entities/tag/model/tag.types";
 import { fetchTagsApi } from "@/entities/tag/api";
+import { fetchUser, fetchUserById } from "@/entities/user/api";
 
 const PostsManager = () => {
   const navigate = useNavigate();
@@ -100,14 +101,8 @@ const PostsManager = () => {
     setLoading(true);
     try {
       const postsData = await getPostApi(limit, skip); // getPost 함수 사용
-      const response = await fetch("/api/users?limit=0&select=username,image");
-      ///api/users?limit=0&select=username,image
-      ///api/users?limit=0&select=username,image
-      if (!response.ok) {
-        throw new Error("사용자 정보 가져오기 실패");
-      }
 
-      const users = await response.json();
+      const users = await fetchUser();
       const usersData: User[] = users.users;
 
       const postsWithUsers: Post[] = postsData.posts.map((post: Post) => {
@@ -160,9 +155,8 @@ const PostsManager = () => {
     }
     setLoading(true);
     try {
-      const [usersResponse] = await Promise.all([fetch("/api/users?limit=0&select=username,image")]);
       const postsData = await fetchPostsByTagApi(tag);
-      const usersData = await usersResponse.json();
+      const usersData = await fetchUser();
 
       const postsWithUsers = postsData.posts.map((post: Post) => ({
         ...post,
@@ -309,9 +303,9 @@ const PostsManager = () => {
   // 사용자 모달 열기
   const openUserModal = async (user: User) => {
     try {
-      const response = await fetch(`/api/users/${user.id}`);
-      const userData = await response.json();
+      const userData = await fetchUserById(user);
       setSelectedUser(userData);
+
       setShowUserDialog(true);
     } catch (error) {
       console.error("사용자 정보 가져오기 오류:", error);

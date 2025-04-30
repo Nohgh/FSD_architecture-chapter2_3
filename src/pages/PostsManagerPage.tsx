@@ -30,11 +30,16 @@ import HighlightText from "@/shared/ui/HighLightText";
 import { NewPost, Post } from "@/entities/post/model/post.types";
 import { Comment, NewComment } from "@/entities/comment/model/comment.type";
 import { User } from "@/entities/user/model/user.types";
-
-export type Tag = {
-  url: string;
-  slug: string;
-};
+import {
+  addPostApi,
+  deletePostApi,
+  fetchPostsByTagApi,
+  getPostApi,
+  searchPostApi,
+  updatePostApi,
+} from "@/entities/post/api";
+import { Tag } from "@/entities/tag/model/tag.types";
+import { fetchTagsApi } from "@/entities/tag/api";
 
 const PostsManager = () => {
   const navigate = useNavigate();
@@ -89,53 +94,46 @@ const PostsManager = () => {
     navigate(`?${params.toString()}`);
   };
 
-  //FIXME: API
   // 게시물 가져오기 (검색결과, 선택된 태그,태그가 전체일때 실행 )
-  const fetchPosts = () => {
+  const fetchPosts = async () => {
+    // 게시물 가져오기 (검색결과, 선택된 태그, 태그가 전체일 때 실행)
     setLoading(true);
-    let postsData: { posts: Post[]; total: number };
-    let usersData: User[];
+    try {
+      const postsData = await getPostApi(limit, skip); // getPost 함수 사용
+      const response = await fetch("/api/users?limit=0&select=username,image");
+      ///api/users?limit=0&select=username,image
+      ///api/users?limit=0&select=username,image
+      if (!response.ok) {
+        throw new Error("사용자 정보 가져오기 실패");
+      }
 
-    fetch(`/api/posts?limit=${limit}&skip=${skip}`)
-      .then((response) => response.json())
-      .then((data) => {
-        postsData = data;
-        return fetch("/api/users?limit=0&select=username,image");
-      })
-      .then((response) => response.json())
-      .then((users) => {
-        usersData = users.users;
+      const users = await response.json();
+      const usersData: User[] = users.users;
 
-        const postsWithUsers: Post[] = postsData.posts.map((post) => {
-          const author = usersData.find((user) => user.id === post.userId);
-          if (!author) return { ...post };
-          return { ...post, author };
-        });
-
-        setPosts(postsWithUsers);
-        setTotal(postsData.total);
-      })
-      .catch((error) => {
-        console.error("게시물 가져오기 오류:", error);
-      })
-      .finally(() => {
-        setLoading(false);
+      const postsWithUsers: Post[] = postsData.posts.map((post: Post) => {
+        const author = usersData.find((user) => user.id === post.userId);
+        return author ? { ...post, author } : { ...post };
       });
+
+      setPosts(postsWithUsers);
+      setTotal(postsData.total);
+    } catch (error) {
+      console.error("게시물 가져오기 오류:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  //FIXME: API
   // 태그 가져오기 (앱 렌더링시 useEffect로 인해 실행)
   const fetchTags = async () => {
     try {
-      const response = await fetch("/api/posts/tags");
-      const data = await response.json();
+      const data = await fetchTagsApi();
       setTags(data);
     } catch (error) {
       console.error("태그 가져오기 오류:", error);
     }
   };
 
-  //FIXME: API
   // 게시물 검색
   const searchPosts = async () => {
     if (!searchQuery) {
@@ -144,16 +142,16 @@ const PostsManager = () => {
     }
     setLoading(true);
     try {
-      const response = await fetch(`/api/posts/search?q=${searchQuery}`);
-      const data = await response.json();
-      setPosts(data.posts);
-      setTotal(data.total);
+      const response = await searchPostApi(searchQuery);
+
+      setPosts(response.posts);
+      setTotal(response.total);
     } catch (error) {
       console.error("게시물 검색 오류:", error);
     }
     setLoading(false);
   };
-  //FIXME: API
+
   // 태그별 게시물 가져오기 (태그 선택시 실행)
   const fetchPostsByTag = async (tag: Post["tags"][number]) => {
     if (!tag || tag === "all") {
@@ -162,11 +160,8 @@ const PostsManager = () => {
     }
     setLoading(true);
     try {
-      const [postsResponse, usersResponse] = await Promise.all([
-        fetch(`/api/posts/tag/${tag}`),
-        fetch("/api/users?limit=0&select=username,image"),
-      ]);
-      const postsData = await postsResponse.json();
+      const [usersResponse] = await Promise.all([fetch("/api/users?limit=0&select=username,image")]);
+      const postsData = await fetchPostsByTagApi(tag);
       const usersData = await usersResponse.json();
 
       const postsWithUsers = postsData.posts.map((post: Post) => ({
@@ -181,52 +176,40 @@ const PostsManager = () => {
     }
     setLoading(false);
   };
-  //FIXME: API
+
   // 게시물 추가
-  const addPost = async () => {
+  const addPosts = async () => {
     try {
-      const response = await fetch("/api/posts/add", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newPost),
-      });
-      const data = await response.json();
-      setPosts([data, ...posts]);
+      const response = await addPostApi(newPost);
+      setPosts([response, ...posts]);
       setShowAddDialog(false);
       setNewPost({ title: "", body: "", userId: 1 });
     } catch (error) {
       console.error("게시물 추가 오류:", error);
     }
   };
-  //FIXME: API
+
   // 게시물 업데이트 (게시물 수정 대화상자에서 게시물 업데이트)
   const updatePost = async () => {
     try {
-      const response = await fetch(`/api/posts/${selectedPost?.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(selectedPost),
-      });
-      const data = await response.json();
+      const data = await updatePostApi(selectedPost);
       setPosts(posts.map((post) => (post.id === data.id ? data : post)));
       setShowEditDialog(false);
     } catch (error) {
       console.error("게시물 업데이트 오류:", error);
     }
   };
-  //FIXME: API
+
   // 게시물 삭제 (삭제버튼 클릭시)
   const deletePost = async (id: number) => {
     try {
-      await fetch(`/api/posts/${id}`, {
-        method: "DELETE",
-      });
+      await deletePostApi(id);
       setPosts(posts.filter((post) => post.id !== id));
     } catch (error) {
       console.error("게시물 삭제 오류:", error);
     }
   };
-  //FIXME: API
+
   // 댓글 가져오기 (게시글 상세보기에서 실행 (이거는 메세지버튼에서 실행))
   const fetchComments = async (postId: number) => {
     if (comments[postId]) return; // 이미 불러온 댓글이 있으면 다시 불러오지 않음
@@ -238,7 +221,7 @@ const PostsManager = () => {
       console.error("댓글 가져오기 오류:", error);
     }
   };
-  //FIXME: API
+
   // 댓글 추가 (댓글추가 대화상자에서 실행)
   const addComment = async () => {
     try {
@@ -258,7 +241,7 @@ const PostsManager = () => {
       console.error("댓글 추가 오류:", error);
     }
   };
-  //FIXME: API
+
   // 댓글 업데이트 (댓글 수정 대화상자)
   const updateComment = async () => {
     try {
@@ -278,7 +261,6 @@ const PostsManager = () => {
     }
   };
 
-  //FIXME: API
   // 댓글 삭제 (게시물 상세 보기 대화상자->renderComments->댓글 삭제)
   const deleteComment = async (id: number, postId: number) => {
     try {
@@ -293,7 +275,7 @@ const PostsManager = () => {
       console.error("댓글 삭제 오류:", error);
     }
   };
-  //FIXME: API
+
   // 댓글 좋아요 (댓글에서 볼 수 있음 (renderComments))
   const likeComment = async (id: Comment["id"], postId: Post["id"]) => {
     const targetComment = comments[postId].find((c) => c.id === id);
@@ -324,7 +306,6 @@ const PostsManager = () => {
     setShowPostDetailDialog(true);
   };
 
-  //FIXME: API
   // 사용자 모달 열기
   const openUserModal = async (user: User) => {
     try {
@@ -619,7 +600,7 @@ const PostsManager = () => {
               value={newPost.userId}
               onChange={(e) => setNewPost({ ...newPost, userId: Number(e.target.value) })}
             />
-            <Button onClick={addPost}>게시물 추가</Button>
+            <Button onClick={addPosts}>게시물 추가</Button>
           </div>
         </DialogContent>
       </Dialog>
@@ -722,38 +703,6 @@ const PostsManager = () => {
           </div>
         </>
       </Modal>
-      {/* <Dialog open={showUserModal} onOpenChange={setShowUserModal}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>사용자 정보</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <img src={selectedUser?.image} alt={selectedUser?.username} className="w-24 h-24 rounded-full mx-auto" />
-            <h3 className="text-xl font-semibold text-center">{selectedUser?.username}</h3>
-            <div className="space-y-2">
-              <p>
-                <strong>이름:</strong> {selectedUser?.firstName} {selectedUser?.lastName}
-              </p>
-              <p>
-                <strong>나이:</strong> {selectedUser?.age}
-              </p>
-              <p>
-                <strong>이메일:</strong> {selectedUser?.email}
-              </p>
-              <p>
-                <strong>전화번호:</strong> {selectedUser?.phone}
-              </p>
-              <p>
-                <strong>주소:</strong> {selectedUser?.address?.address}, {selectedUser?.address?.city},{" "}
-                {selectedUser?.address?.state}
-              </p>
-              <p>
-                <strong>직장:</strong> {selectedUser?.company?.name} - {selectedUser?.company?.title}
-              </p>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog> */}
     </Card>
   );
 };

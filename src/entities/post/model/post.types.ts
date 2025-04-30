@@ -14,3 +14,10 @@ export interface Post {
 }
 
 export type NewPost = Pick<Post, "title" | "body" | "userId">;
+
+export interface PostRequest {
+  posts: Post[];
+  limit: number;
+  skip: number;
+  total: number;
+}

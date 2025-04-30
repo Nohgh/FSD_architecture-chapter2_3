@@ -26,6 +26,7 @@ import {
   Textarea,
 } from "../shared/ui";
 import { Modal } from "../shared/ui/Modal";
+import highlightText from "../shared/lib/highlightText";
 
 type Post = {
   id: number;
@@ -90,40 +91,33 @@ const PostsManager = () => {
   const queryParams = new URLSearchParams(location.search);
 
   //TODO: 상태 관리
-  // 게시글
+
+  const [loading, setLoading] = useState(false);
+
   const [posts, setPosts] = useState<Post[]>([]);
-  // 게시글의 개수
-  const [total, setTotal] = useState(0);
-  // 다음을 클릭한 횟수
-  const [skip, setSkip] = useState(parseInt(queryParams.get("skip") || "0"));
-  // 페이지에 보여주는 post개수
-  const [limit, setLimit] = useState(parseInt(queryParams.get("limit") || "10"));
-  // 검색 쿼리(결과)
-  const [searchQuery, setSearchQuery] = useState(queryParams.get("search") || "");
-  // 선택한 포스트
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
-  // 정렬기준
+  const [newPost, setNewPost] = useState<NewPost>({ title: "", body: "", userId: 1 });
+
+  const [total, setTotal] = useState(0);
+  const [skip, setSkip] = useState(parseInt(queryParams.get("skip") || "0"));
+  const [limit, setLimit] = useState(parseInt(queryParams.get("limit") || "10"));
+
+  const [searchQuery, setSearchQuery] = useState(queryParams.get("search") || "");
+
   const [sortBy, setSortBy] = useState(queryParams.get("sortBy") || "");
-  // 정렬 순서
   const [sortOrder, setSortOrder] = useState(queryParams.get("sortOrder") || "asc");
+
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [selectedTag, setSelectedTag] = useState(queryParams.get("tag") || "");
+
+  const [comments, setComments] = useState<{ [key: Post["id"]]: Commnent[] }>({});
+  const [selectedComment, setSelectedComment] = useState<Commnent | null>(null);
+  const [newComment, setNewComment] = useState<NewComment>({ body: "", postId: null, userId: 1 });
+
   // 게시물 추가 대화상자
   const [showAddDialog, setShowAddDialog] = useState(false);
   // 게시물 수정 대화상자
   const [showEditDialog, setShowEditDialog] = useState(false);
-  // 새 게시글 추가
-  const [newPost, setNewPost] = useState<NewPost>({ title: "", body: "", userId: 1 });
-  // 로딩 상태 -> 게시물 테이블 렌더링 여부
-  const [loading, setLoading] = useState(false);
-  // 태그
-  const [tags, setTags] = useState<Tag[]>([]);
-  // 선택된 태그
-  const [selectedTag, setSelectedTag] = useState(queryParams.get("tag") || "");
-  // 댓글
-  const [comments, setComments] = useState<{ [key: Post["id"]]: Commnent[] }>({});
-  // 선택한 댓글 (댓글 수정 대화상자 에서 사용)
-  const [selectedComment, setSelectedComment] = useState<Commnent | null>(null);
-  // 새 댓글 (새댓글 추가에서 추가된)
-  const [newComment, setNewComment] = useState<NewComment>({ body: "", postId: null, userId: 1 });
   // 댓글 추가 대화상자
   const [showAddCommentDialog, setShowAddCommentDialog] = useState(false);
   // 댓글 수정 대화상자
@@ -131,8 +125,7 @@ const PostsManager = () => {
   // 게시물 상세 보기 대화상자
   const [showPostDetailDialog, setShowPostDetailDialog] = useState(false);
   // 유저 모달
-  const [showUserModal, setShowUserModal] = useState(false);
-  // 선택된 사용자 (유저 모달에서 사용)
+  const [showUserDialog, setShowUserDialog] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
   //TODO: Function
@@ -385,7 +378,7 @@ const PostsManager = () => {
       const response = await fetch(`/api/users/${user.id}`);
       const userData = await response.json();
       setSelectedUser(userData);
-      setShowUserModal(true);
+      setShowUserDialog(true);
     } catch (error) {
       console.error("사용자 정보 가져오기 오류:", error);
     }
@@ -419,21 +412,6 @@ const PostsManager = () => {
     setSortOrder(params.get("sortOrder") || "asc");
     setSelectedTag(params.get("tag") || "");
   }, [location.search]);
-
-  // 하이라이트 함수
-  const highlightText = (text: string, highlight: string) => {
-    if (!text) return null;
-    if (!highlight.trim()) {
-      return <span>{text}</span>;
-    }
-    const regex = new RegExp(`(${highlight})`, "gi");
-    const parts = text.split(regex);
-    return (
-      <span>
-        {parts.map((part, i) => (regex.test(part) ? <mark key={i}>{part}</mark> : <span key={i}>{part}</span>))}
-      </span>
-    );
-  };
 
   // 게시물 테이블 렌더링 (로딩 여부에 따라 실행)
   const renderPostTable = () => (
@@ -662,11 +640,6 @@ const PostsManager = () => {
           </div>
         </div>
       </CardContent>
-      {/* widgets/comment/ui/modal/postAdd,Edit */}
-      {/* widgets/modal/post,comment,user */}
-      {/* feature/showModal/ui/post */}
-      {/* feature/showModal/ui/user */}
-
       {/* 게시물 추가 대화상자 */}
       <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
         <DialogContent>
@@ -695,7 +668,6 @@ const PostsManager = () => {
           </div>
         </DialogContent>
       </Dialog>
-
       {/* 게시물 수정 대화상자 */}
       <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
         <DialogContent>
@@ -718,7 +690,6 @@ const PostsManager = () => {
           </div>
         </DialogContent>
       </Dialog>
-
       {/* 댓글 추가 대화상자 */}
       <Dialog open={showAddCommentDialog} onOpenChange={setShowAddCommentDialog}>
         <DialogContent>
@@ -735,7 +706,6 @@ const PostsManager = () => {
           </div>
         </DialogContent>
       </Dialog>
-
       {/* 댓글 수정 대화상자 */}
       <Dialog open={showEditCommentDialog} onOpenChange={setShowEditCommentDialog}>
         <DialogContent>
@@ -752,7 +722,6 @@ const PostsManager = () => {
           </div>
         </DialogContent>
       </Dialog>
-
       {/* 게시물 상세 보기 대화상자 */}
       <Dialog open={showPostDetailDialog} onOpenChange={setShowPostDetailDialog}>
         <DialogContent className="max-w-3xl">
@@ -765,8 +734,34 @@ const PostsManager = () => {
           </div>
         </DialogContent>
       </Dialog>
-
-      {/* 사용자 모달 */}
+      {/* 사용자 모달 */}{" "}
+      <Modal open={showUserDialog} onOpenChange={setShowUserDialog} title="사용자 정보">
+        <>
+          <img src={selectedUser?.image} alt={selectedUser?.username} className="w-24 h-24 rounded-full mx-auto" />
+          <h3 className="text-xl font-semibold text-center">{selectedUser?.username}</h3>
+          <div className="space-y-2">
+            <p>
+              <strong>이름:</strong> {selectedUser?.firstName} {selectedUser?.lastName}
+            </p>
+            <p>
+              <strong>나이:</strong> {selectedUser?.age}
+            </p>
+            <p>
+              <strong>이메일:</strong> {selectedUser?.email}
+            </p>
+            <p>
+              <strong>전화번호:</strong> {selectedUser?.phone}
+            </p>
+            <p>
+              <strong>주소:</strong> {selectedUser?.address?.address}, {selectedUser?.address?.city},{" "}
+              {selectedUser?.address?.state}
+            </p>
+            <p>
+              <strong>직장:</strong> {selectedUser?.company?.name} - {selectedUser?.company?.title}
+            </p>
+          </div>
+        </>
+      </Modal>
       {/* <Dialog open={showUserModal} onOpenChange={setShowUserModal}>
         <DialogContent>
           <DialogHeader>
@@ -799,33 +794,6 @@ const PostsManager = () => {
           </div>
         </DialogContent>
       </Dialog> */}
-      <Modal open={showUserModal} onOpenChange={setShowUserModal} title="사용자 정보">
-        <>
-          <img src={selectedUser?.image} alt={selectedUser?.username} className="w-24 h-24 rounded-full mx-auto" />
-          <h3 className="text-xl font-semibold text-center">{selectedUser?.username}</h3>
-          <div className="space-y-2">
-            <p>
-              <strong>이름:</strong> {selectedUser?.firstName} {selectedUser?.lastName}
-            </p>
-            <p>
-              <strong>나이:</strong> {selectedUser?.age}
-            </p>
-            <p>
-              <strong>이메일:</strong> {selectedUser?.email}
-            </p>
-            <p>
-              <strong>전화번호:</strong> {selectedUser?.phone}
-            </p>
-            <p>
-              <strong>주소:</strong> {selectedUser?.address?.address}, {selectedUser?.address?.city},{" "}
-              {selectedUser?.address?.state}
-            </p>
-            <p>
-              <strong>직장:</strong> {selectedUser?.company?.name} - {selectedUser?.company?.title}
-            </p>
-          </div>
-        </>
-      </Modal>
     </Card>
   );
 };

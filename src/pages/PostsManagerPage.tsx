@@ -41,6 +41,13 @@ import {
 import { Tag } from "@/entities/tag/model/tag.types";
 import { fetchTagsApi } from "@/entities/tag/api";
 import { fetchUser, fetchUserById } from "@/entities/user/api";
+import {
+  addCommentApi,
+  deleteCommentApi,
+  fetchCommentsApi,
+  likeCommentApi,
+  updateCommentApi,
+} from "@/entities/comment/api";
 
 const PostsManager = () => {
   const navigate = useNavigate();
@@ -208,8 +215,7 @@ const PostsManager = () => {
   const fetchComments = async (postId: number) => {
     if (comments[postId]) return; // 이미 불러온 댓글이 있으면 다시 불러오지 않음
     try {
-      const response = await fetch(`/api/comments/post/${postId}`);
-      const data = await response.json();
+      const data = await fetchCommentsApi(postId);
       setComments((prev) => ({ ...prev, [postId]: data.comments }));
     } catch (error) {
       console.error("댓글 가져오기 오류:", error);
@@ -219,16 +225,12 @@ const PostsManager = () => {
   // 댓글 추가 (댓글추가 대화상자에서 실행)
   const addComment = async () => {
     try {
-      const response = await fetch("/api/comments/add", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newComment),
-      });
-      const data = await response.json();
+      const data = await addCommentApi(newComment);
       setComments((prev) => ({
         ...prev,
         [data.postId]: [...(prev[data.postId] || []), data],
       }));
+
       setShowAddCommentDialog(false);
       setNewComment({ body: "", postId: null, userId: 1 });
     } catch (error) {
@@ -239,16 +241,12 @@ const PostsManager = () => {
   // 댓글 업데이트 (댓글 수정 대화상자)
   const updateComment = async () => {
     try {
-      const response = await fetch(`/api/comments/${selectedComment?.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ body: selectedComment?.body }),
-      });
-      const data = await response.json();
+      const data = await updateCommentApi(selectedComment);
       setComments((prev) => ({
         ...prev,
         [data.postId]: prev[data.postId].map((comment) => (comment.id === data.id ? data : comment)),
       }));
+
       setShowEditCommentDialog(false);
     } catch (error) {
       console.error("댓글 업데이트 오류:", error);
@@ -258,9 +256,7 @@ const PostsManager = () => {
   // 댓글 삭제 (게시물 상세 보기 대화상자->renderComments->댓글 삭제)
   const deleteComment = async (id: number, postId: number) => {
     try {
-      await fetch(`/api/comments/${id}`, {
-        method: "DELETE",
-      });
+      await deleteCommentApi(id);
       setComments((prev) => ({
         ...prev,
         [postId]: prev[postId].filter((comment) => comment.id !== id),
@@ -276,12 +272,7 @@ const PostsManager = () => {
     if (!targetComment) return;
 
     try {
-      const response = await fetch(`/api/comments/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ likes: targetComment.likes + 1 }),
-      });
-      const data = await response.json();
+      const data = await likeCommentApi(id, targetComment);
       setComments((prev) => ({
         ...prev,
         [postId]: prev[postId].map((comment) =>

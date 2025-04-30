@@ -12,3 +12,10 @@ export interface Comment {
 }
 
 export type NewComment = Pick<Comment, "body" | "postId" | "userId">;
+
+export interface FetchComment {
+  comments: Comment[];
+  limit: number;
+  skip: number;
+  total: number;
+}

@@ -26,12 +26,12 @@ import {
   Textarea,
 } from "../shared/ui";
 import { Modal } from "../shared/ui/Modal";
-import highlightText from "../shared/lib/highlightText";
+import HighlightText from "@/shared/ui/HighLightText";
 import { NewPost, Post } from "@/entities/post/model/post.types";
 import { Comment, NewComment } from "@/entities/comment/model/comment.type";
 import { User } from "@/entities/user/model/user.types";
 
-type Tag = {
+export type Tag = {
   url: string;
   slug: string;
 };
@@ -40,8 +40,6 @@ const PostsManager = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-
-  //TODO: 상태 관리
 
   const [loading, setLoading] = useState(false);
 
@@ -79,7 +77,6 @@ const PostsManager = () => {
   const [showUserDialog, setShowUserDialog] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
-  //TODO: Function
   // URL 업데이트 함수 (useEffect[skip,...],태그 선택시 실행)
   const updateURL = () => {
     const params = new URLSearchParams();
@@ -92,6 +89,7 @@ const PostsManager = () => {
     navigate(`?${params.toString()}`);
   };
 
+  //FIXME: API
   // 게시물 가져오기 (검색결과, 선택된 태그,태그가 전체일때 실행 )
   const fetchPosts = () => {
     setLoading(true);
@@ -125,6 +123,7 @@ const PostsManager = () => {
       });
   };
 
+  //FIXME: API
   // 태그 가져오기 (앱 렌더링시 useEffect로 인해 실행)
   const fetchTags = async () => {
     try {
@@ -136,6 +135,7 @@ const PostsManager = () => {
     }
   };
 
+  //FIXME: API
   // 게시물 검색
   const searchPosts = async () => {
     if (!searchQuery) {
@@ -153,7 +153,7 @@ const PostsManager = () => {
     }
     setLoading(false);
   };
-
+  //FIXME: API
   // 태그별 게시물 가져오기 (태그 선택시 실행)
   const fetchPostsByTag = async (tag: Post["tags"][number]) => {
     if (!tag || tag === "all") {
@@ -181,7 +181,7 @@ const PostsManager = () => {
     }
     setLoading(false);
   };
-
+  //FIXME: API
   // 게시물 추가
   const addPost = async () => {
     try {
@@ -198,7 +198,7 @@ const PostsManager = () => {
       console.error("게시물 추가 오류:", error);
     }
   };
-
+  //FIXME: API
   // 게시물 업데이트 (게시물 수정 대화상자에서 게시물 업데이트)
   const updatePost = async () => {
     try {
@@ -214,7 +214,7 @@ const PostsManager = () => {
       console.error("게시물 업데이트 오류:", error);
     }
   };
-
+  //FIXME: API
   // 게시물 삭제 (삭제버튼 클릭시)
   const deletePost = async (id: number) => {
     try {
@@ -226,7 +226,7 @@ const PostsManager = () => {
       console.error("게시물 삭제 오류:", error);
     }
   };
-
+  //FIXME: API
   // 댓글 가져오기 (게시글 상세보기에서 실행 (이거는 메세지버튼에서 실행))
   const fetchComments = async (postId: number) => {
     if (comments[postId]) return; // 이미 불러온 댓글이 있으면 다시 불러오지 않음
@@ -238,7 +238,7 @@ const PostsManager = () => {
       console.error("댓글 가져오기 오류:", error);
     }
   };
-
+  //FIXME: API
   // 댓글 추가 (댓글추가 대화상자에서 실행)
   const addComment = async () => {
     try {
@@ -258,7 +258,7 @@ const PostsManager = () => {
       console.error("댓글 추가 오류:", error);
     }
   };
-
+  //FIXME: API
   // 댓글 업데이트 (댓글 수정 대화상자)
   const updateComment = async () => {
     try {
@@ -278,6 +278,7 @@ const PostsManager = () => {
     }
   };
 
+  //FIXME: API
   // 댓글 삭제 (게시물 상세 보기 대화상자->renderComments->댓글 삭제)
   const deleteComment = async (id: number, postId: number) => {
     try {
@@ -292,7 +293,7 @@ const PostsManager = () => {
       console.error("댓글 삭제 오류:", error);
     }
   };
-
+  //FIXME: API
   // 댓글 좋아요 (댓글에서 볼 수 있음 (renderComments))
   const likeComment = async (id: Comment["id"], postId: Post["id"]) => {
     const targetComment = comments[postId].find((c) => c.id === id);
@@ -323,6 +324,7 @@ const PostsManager = () => {
     setShowPostDetailDialog(true);
   };
 
+  //FIXME: API
   // 사용자 모달 열기
   const openUserModal = async (user: User) => {
     try {
@@ -336,7 +338,6 @@ const PostsManager = () => {
   };
   //계층별로 뭘 만들지를 구두로 정리, 하고 진행하면 도움이 된다.
 
-  //TODO:참조
   useEffect(() => {
     fetchTags();
   }, []);
@@ -381,7 +382,9 @@ const PostsManager = () => {
             <TableCell>{post.id}</TableCell>
             <TableCell>
               <div className="space-y-1">
-                <div>{highlightText(post.title, searchQuery)}</div>
+                <div>
+                  <HighlightText text={post.title} highlight={searchQuery} />
+                </div>
 
                 <div className="flex flex-wrap gap-1">
                   {post.tags?.map((tag) => (
@@ -464,7 +467,9 @@ const PostsManager = () => {
           <div key={comment.id} className="flex items-center justify-between text-sm border-b pb-1">
             <div className="flex items-center space-x-2 overflow-hidden">
               <span className="font-medium truncate">{comment.user.username}:</span>
-              <span className="truncate">{highlightText(comment.body, searchQuery)}</span>
+              <span className="truncate">
+                <HighlightText text={comment.body} highlight={searchQuery} />
+              </span>
             </div>
             <div className="flex items-center space-x-1">
               <Button variant="ghost" size="sm" onClick={() => likeComment(comment.id, postId)}>
@@ -676,10 +681,15 @@ const PostsManager = () => {
       <Dialog open={showPostDetailDialog} onOpenChange={setShowPostDetailDialog}>
         <DialogContent className="max-w-3xl">
           <DialogHeader>
-            <DialogTitle>{highlightText(selectedPost?.title || "", searchQuery)}</DialogTitle>
+            <DialogTitle>
+              <HighlightText text={selectedPost?.title || ""} highlight={searchQuery} />
+            </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <p>{highlightText(selectedPost?.body || "", searchQuery)}</p>
+            <p>
+              <HighlightText text={selectedPost?.body || ""} highlight={searchQuery} />
+            </p>
+
             {renderComments(selectedPost?.id || 0)}
           </div>
         </DialogContent>

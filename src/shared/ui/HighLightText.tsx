@@ -1,4 +1,9 @@
-const highlightText = (text: string, highlight: string) => {
+interface HighlightTextProps {
+  text: string;
+  highlight: string;
+}
+
+const HighlightText: React.FC<HighlightTextProps> = ({ text, highlight }) => {
   if (!text) return null;
   if (!highlight.trim()) {
     return <span>{text}</span>;
@@ -14,4 +19,4 @@ const highlightText = (text: string, highlight: string) => {
   );
 };
 
-export default highlightText;
+export default HighlightText;

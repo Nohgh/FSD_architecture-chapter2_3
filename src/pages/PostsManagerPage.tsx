@@ -27,62 +27,13 @@ import {
 } from "../shared/ui";
 import { Modal } from "../shared/ui/Modal";
 import highlightText from "../shared/lib/highlightText";
-
-type Post = {
-  id: number;
-  title: string;
-  body: string;
-  tags: string[];
-  reactions?: {
-    likes?: number;
-    dislikes?: number;
-  };
-  userId: number;
-  author: User;
-};
-
-type NewPost = Pick<Post, "title" | "body" | "userId">;
+import { NewPost, Post } from "@/entities/post/model/post.types";
+import { Comment, NewComment } from "@/entities/comment/model/comment.type";
+import { User } from "@/entities/user/model/user.types";
 
 type Tag = {
   url: string;
   slug: string;
-};
-
-type Commnent = {
-  id: number;
-  postId: number | null;
-  user: {
-    username: string;
-  };
-  body: string;
-  likes: number;
-  userId?: User["id"];
-};
-
-type NewComment = Pick<Commnent, "body" | "postId" | "userId">;
-
-type Address = {
-  address: string;
-  city: string;
-  state: string;
-};
-
-type Company = {
-  name: string;
-  title: string;
-};
-
-type User = {
-  id: number;
-  age?: number;
-  email?: number;
-  username: string;
-  firstName?: string;
-  lastName?: string;
-  image: string;
-  phone?: string;
-  address?: Address;
-  company?: Company;
 };
 
 const PostsManager = () => {
@@ -110,8 +61,8 @@ const PostsManager = () => {
   const [tags, setTags] = useState<Tag[]>([]);
   const [selectedTag, setSelectedTag] = useState(queryParams.get("tag") || "");
 
-  const [comments, setComments] = useState<{ [key: Post["id"]]: Commnent[] }>({});
-  const [selectedComment, setSelectedComment] = useState<Commnent | null>(null);
+  const [comments, setComments] = useState<{ [key: Post["id"]]: Comment[] }>({});
+  const [selectedComment, setSelectedComment] = useState<Comment | null>(null);
   const [newComment, setNewComment] = useState<NewComment>({ body: "", postId: null, userId: 1 });
 
   // 게시물 추가 대화상자
@@ -343,7 +294,7 @@ const PostsManager = () => {
   };
 
   // 댓글 좋아요 (댓글에서 볼 수 있음 (renderComments))
-  const likeComment = async (id: Commnent["id"], postId: Post["id"]) => {
+  const likeComment = async (id: Comment["id"], postId: Post["id"]) => {
     const targetComment = comments[postId].find((c) => c.id === id);
     if (!targetComment) return;
 
@@ -392,7 +343,6 @@ const PostsManager = () => {
 
   //태그 선택 여부에 따라, 태그별 게시물 가져오기,게시물 가져오기를 수행합니다. 또한 URL을 업데이트 합니다.
   useEffect(() => {
-    console.log("skip,limit", skip, limit);
     if (selectedTag) {
       fetchPostsByTag(selectedTag);
     } else {

@@ -14,7 +14,7 @@ import {
 import HighlightText from "@/shared/ui/HighLightText";
 import { Post } from "@/entities/post/model/post.types";
 import { Comment } from "@/entities/comment/model/comment.type";
-import { addCommentApi, deleteCommentApi, likeCommentApi, updateCommentApi } from "@/entities/comment/api";
+import { deleteCommentApi, likeCommentApi } from "@/entities/comment/api";
 import useUrl from "@/shared/lib/useUrl";
 import { useModalStore } from "@/shared/model/useModalStore";
 import useLoadingStore from "@/features/post/model/useLoadingStore";
@@ -32,6 +32,8 @@ import PostHeader from "@/features/post/ui/PostHeader";
 import PostSearch from "@/features/post/ui/PostSearch";
 import PostFilter from "@/features/post/ui/PostFilter";
 import PostPageNations from "@/features/post/ui/PostPageNations";
+import useAddComment from "@/features/commnet/model/useAddComment";
+import useUpdateComments from "@/features/commnet/model/useUpdateComment";
 
 const PostsManager = () => {
   const { skip, limit, searchQuery, sortBy, sortOrder, selectedTag, updateURL } = useUrl();
@@ -62,38 +64,9 @@ const PostsManager = () => {
   const { updatePost } = useUpdatePost();
   const { addPosts } = useAddPosts();
 
-  // 댓글 추가 (댓글추가 대화상자에서 실행)
-  const addComment = async () => {
-    try {
-      const data = await addCommentApi(newComment);
-      setComments((prev) => ({
-        ...prev,
-        [data.postId]: [...(prev[data.postId] || []), data],
-      }));
+  const { addComment } = useAddComment();
+  const { updateComment } = useUpdateComments();
 
-      setShowAddCommentDialog(false);
-      setNewComment({ body: "", postId: null, userId: 1 });
-    } catch (error) {
-      console.error("댓글 추가 오류:", error);
-    }
-  };
-
-  // 댓글 업데이트 (댓글 수정 대화상자)
-  const updateComment = async () => {
-    try {
-      const data = await updateCommentApi(selectedComment);
-      setComments((prev) => ({
-        ...prev,
-        [data.postId]: prev[data.postId].map((comment) => (comment.id === data.id ? data : comment)),
-      }));
-
-      setShowEditCommentDialog(false);
-    } catch (error) {
-      console.error("댓글 업데이트 오류:", error);
-    }
-  };
-
-  // 댓글 삭제 (게시물 상세 보기 대화상자->renderComments->댓글 삭제)
   const deleteComment = async (id: number, postId: number) => {
     try {
       await deleteCommentApi(id);

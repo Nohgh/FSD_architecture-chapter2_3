@@ -36,6 +36,7 @@ import useFetchPostsByTag from "@/features/post/model/useFetchPostsByTag";
 import useUpdatePost from "@/features/post/model/useUpdatePost";
 import useAddPosts from "@/features/post/model/useAddPosts";
 import PostTable from "@/widgets/post/ui/PostTable";
+import Loading from "@/shared/ui/Loading";
 
 const PostsManager = () => {
   const {
@@ -222,7 +223,7 @@ const PostsManager = () => {
       </CardHeader>
       <CardContent>
         <div className="flex flex-col gap-4">
-          {/* 검색 및 필터 컨트롤 */}
+          {/* 검색 */}
           <div className="flex gap-4">
             <div className="flex-1">
               <div className="relative">
@@ -236,6 +237,7 @@ const PostsManager = () => {
                 />
               </div>
             </div>
+            {/* 필터 */}
             <Select
               value={selectedTag}
               onValueChange={(value) => {
@@ -279,7 +281,7 @@ const PostsManager = () => {
           </div>
 
           {/* 게시물 테이블 */}
-          {loading ? <div className="flex justify-center p-4">로딩 중...</div> : <PostTable />}
+          {loading ? <Loading /> : <PostTable />}
 
           {/* 페이지네이션 */}
           <div className="flex justify-between items-center">
@@ -407,7 +409,7 @@ const PostsManager = () => {
           </div>
         </DialogContent>
       </Dialog>
-      {/* 사용자 모달 */}{" "}
+      {/* 사용자 모달 */}
       <Dialog open={showUserDialog} onOpenChange={setShowUserDialog}>
         <DialogContent className="max-w-3xl">
           <DialogHeader>

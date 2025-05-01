@@ -1,10 +1,10 @@
-import useUrl from "@/shared/lib/useUrl";
+import useQueryParams from "@/shared/lib/useQueryParams";
 import { SelectTrigger, SelectValue, SelectContent, SelectItem, Select } from "@/shared/ui";
 import useTagStore from "../model/useTagStore";
 import useFetchPostsByTag from "../model/useFetchPostsByTag";
 
 const PostFilter = () => {
-  const { updateURL, sortBy, setSortBy, sortOrder, setSortOrder, selectedTag, setSelectedTag } = useUrl();
+  const { updateURL, sortBy, setSortBy, sortOrder, setSortOrder, selectedTag, setSelectedTag } = useQueryParams();
   const { tags } = useTagStore();
   const { fetchPostsByTag } = useFetchPostsByTag();
 

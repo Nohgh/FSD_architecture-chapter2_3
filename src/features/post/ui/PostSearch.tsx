@@ -1,10 +1,10 @@
-import useUrl from "@/shared/lib/useUrl";
+import useQueryParams from "@/shared/lib/useQueryParams";
 import { Input } from "@/shared/ui";
 import { Search } from "lucide-react";
 import useSearchPosts from "../model/useSearchPosts";
 
 const PostSearch = () => {
-  const { searchQuery, setSearchQuery } = useUrl();
+  const { searchQuery, setSearchQuery } = useQueryParams();
   const { searchPosts } = useSearchPosts();
 
   return (

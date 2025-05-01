@@ -1,4 +1,4 @@
-import useUrl from "@/shared/lib/useUrl";
+import useQueryParams from "@/shared/lib/useQueryParams";
 import useFetchPosts from "./useFetchPosts";
 import useLoadingStore from "./useLoadingStore";
 import { searchPostApi } from "@/entities/post/api";
@@ -6,7 +6,7 @@ import usePostStore from "./usePostStore";
 
 // 게시물 검색
 const useSearchPosts = () => {
-  const { setTotal } = useUrl();
+  const { setTotal } = useQueryParams();
   const { fetchPosts } = useFetchPosts();
   const { setLoading } = useLoadingStore();
   const { setPosts } = usePostStore();

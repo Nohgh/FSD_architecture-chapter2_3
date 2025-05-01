@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-const useUrl = () => {
+const useQueryParams = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -58,4 +58,4 @@ const useUrl = () => {
   };
 };
 
-export default useUrl;
+export default useQueryParams;

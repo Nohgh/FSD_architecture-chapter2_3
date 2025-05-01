@@ -1,4 +1,4 @@
-import useUrl from "@/shared/lib/useUrl";
+import useQueryParams from "@/shared/lib/useQueryParams";
 import useFetchTag from "./useFetchTag";
 import useFetchPostsByTag from "./useFetchPostsByTag";
 import useFetchPosts from "./useFetchPosts";
@@ -10,7 +10,7 @@ import { useEffect } from "react";
  * - 태그 목록을 초기화
  */
 const usePostManager = () => {
-  const { skip, limit, sortBy, sortOrder, selectedTag, updateURL } = useUrl();
+  const { skip, limit, sortBy, sortOrder, selectedTag, updateURL } = useQueryParams();
 
   const { fetchTags } = useFetchTag();
   const { fetchPostsByTag } = useFetchPostsByTag();

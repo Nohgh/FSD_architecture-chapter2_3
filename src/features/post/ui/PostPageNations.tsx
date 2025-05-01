@@ -1,8 +1,8 @@
-import useUrl from "@/shared/lib/useUrl";
+import useQueryParams from "@/shared/lib/useQueryParams";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Button } from "@/shared/ui";
 
 const PostPageNations = () => {
-  const { limit, skip, total, setLimit, setSkip } = useUrl();
+  const { limit, skip, total, setLimit, setSkip } = useQueryParams();
 
   return (
     <div className="flex justify-between items-center">

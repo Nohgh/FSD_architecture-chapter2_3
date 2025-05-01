@@ -3,10 +3,10 @@ import HighlightText from "@/shared/ui/HighLightText";
 import Comment from "../comment/Comment";
 import { useModalStore } from "@/shared/model/useModalStore";
 import usePostStore from "@/features/post/model/usePostStore";
-import useUrl from "@/shared/lib/useUrl";
+import useQueryParams from "@/shared/lib/useQueryParams";
 
 const PostDetailModal = () => {
-  const { searchQuery } = useUrl();
+  const { searchQuery } = useQueryParams();
   const { showPostDetailDialog, setShowPostDetailDialog } = useModalStore();
   const { selectedPost } = usePostStore();
 

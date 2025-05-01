@@ -1,4 +1,4 @@
-import useUrl from "@/shared/lib/useUrl";
+import useQueryParams from "@/shared/lib/useQueryParams";
 import { Post } from "@/entities/post/model/post.types";
 import { fetchUser } from "@/entities/user/api";
 import { User } from "@/entities/user/model/user.types";
@@ -12,7 +12,7 @@ const useFetchPostsByTag = () => {
   const { fetchPosts } = useFetchPosts();
   const { setLoading } = useLoadingStore();
   const { setPosts } = usePostStore();
-  const { setTotal } = useUrl();
+  const { setTotal } = useQueryParams();
 
   const fetchPostsByTag = async (tag: Post["tags"][number]) => {
     if (!tag || tag === "all") {

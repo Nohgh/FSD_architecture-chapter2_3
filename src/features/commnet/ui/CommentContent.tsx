@@ -1,7 +1,7 @@
 import { Button } from "@/shared/ui";
 import { Edit2, ThumbsUp, Trash2 } from "lucide-react";
 import { Post } from "@/entities/post/model/post.types";
-import useUrl from "@/shared/lib/useUrl";
+import useQueryParams from "@/shared/lib/useQueryParams";
 import HighlightText from "@/shared/ui/HighLightText";
 import { useModalStore } from "@/shared/model/useModalStore";
 import useLikeComment from "../model/useLikeComment";
@@ -10,7 +10,7 @@ import useDeleteComment from "../model/useDeleteComment";
 
 const CommentContent = ({ postId }: { postId: Post["id"] }) => {
   const { comments, setSelectedComment } = useCommentStore();
-  const { searchQuery } = useUrl();
+  const { searchQuery } = useQueryParams();
   const { likeComment } = useLikeComment();
   const { deleteComment } = useDeleteComment();
   const { setShowEditCommentDialog } = useModalStore();

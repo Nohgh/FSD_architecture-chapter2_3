@@ -1,6 +1,6 @@
 import { Button, TableBody, TableCell, TableRow } from "@/shared/ui";
 import { Edit2, MessageSquare, ThumbsDown, ThumbsUp, Trash2 } from "lucide-react";
-import useUrl from "@/shared/lib/useUrl";
+import useQueryParams from "@/shared/lib/useQueryParams";
 import HighlightText from "@/shared/ui/HighLightText";
 import { useModalStore } from "@/shared/model/useModalStore";
 import usePostStore from "../model/usePostStore";
@@ -10,7 +10,7 @@ import useDeletePost from "../model/useDeletePost";
 
 const PostTableBody = () => {
   const { posts, setSelectedPost } = usePostStore();
-  const { selectedTag, searchQuery, setSelectedTag, updateURL } = useUrl();
+  const { selectedTag, searchQuery, setSelectedTag, updateURL } = useQueryParams();
   const { setShowEditDialog } = useModalStore();
   const { openUserModal } = useOpenUserModal();
   const { openPostDetail } = useOpenPostDetail();

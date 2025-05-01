@@ -1,6 +1,6 @@
 import usePostStore from "@/features/post/model/usePostStore";
 import useUserStore from "@/features/user/model/useUserStore";
-import useUrl from "@/shared/lib/useUrl";
+import useQueryParams from "@/shared/lib/useQueryParams";
 import { useModalStore } from "@/shared/model/useModalStore";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/shared/ui";
 import HighlightText from "@/shared/ui/HighLightText";
@@ -8,7 +8,7 @@ import HighlightText from "@/shared/ui/HighLightText";
 const UserModal = () => {
   const { showUserDialog, setShowUserDialog } = useModalStore();
   const { selectedPost } = usePostStore();
-  const { searchQuery } = useUrl();
+  const { searchQuery } = useQueryParams();
   const { selectedUser } = useUserStore();
 
   return (

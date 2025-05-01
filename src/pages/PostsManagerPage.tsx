@@ -13,8 +13,6 @@ import {
 } from "../shared/ui";
 import HighlightText from "@/shared/ui/HighLightText";
 import { Post } from "@/entities/post/model/post.types";
-import { Comment } from "@/entities/comment/model/comment.type";
-import { deleteCommentApi, likeCommentApi } from "@/entities/comment/api";
 import useUrl from "@/shared/lib/useUrl";
 import { useModalStore } from "@/shared/model/useModalStore";
 import useLoadingStore from "@/features/post/model/useLoadingStore";
@@ -34,15 +32,18 @@ import PostFilter from "@/features/post/ui/PostFilter";
 import PostPageNations from "@/features/post/ui/PostPageNations";
 import useAddComment from "@/features/commnet/model/useAddComment";
 import useUpdateComments from "@/features/commnet/model/useUpdateComment";
+import useDeleteComment from "@/features/commnet/model/useDeleteComment";
+import useLikeComment from "@/features/commnet/model/useLikeComment";
 
 const PostsManager = () => {
+  //lib
   const { skip, limit, searchQuery, sortBy, sortOrder, selectedTag, updateURL } = useUrl();
 
+  //store
   const { loading } = useLoadingStore();
   const { selectedPost, newPost, setSelectedPost, setNewPost } = usePostStore();
-  const { comments, selectedComment, newComment, setComments, setSelectedComment, setNewComment } = useCommentStore();
+  const { comments, selectedComment, newComment, setSelectedComment, setNewComment } = useCommentStore();
   const { selectedUser } = useUserStore();
-
   const {
     showAddDialog,
     showEditDialog,
@@ -58,45 +59,20 @@ const PostsManager = () => {
     setShowUserDialog,
   } = useModalStore();
 
-  const { fetchPosts } = useFetchPosts();
+  //hooks
   const { fetchTags } = useFetchTag();
   const { fetchPostsByTag } = useFetchPostsByTag();
+
+  const { fetchPosts } = useFetchPosts();
   const { updatePost } = useUpdatePost();
   const { addPosts } = useAddPosts();
 
   const { addComment } = useAddComment();
   const { updateComment } = useUpdateComments();
+  const { deleteComment } = useDeleteComment();
+  const { likeComment } = useLikeComment();
 
-  const deleteComment = async (id: number, postId: number) => {
-    try {
-      await deleteCommentApi(id);
-      setComments((prev) => ({
-        ...prev,
-        [postId]: prev[postId].filter((comment) => comment.id !== id),
-      }));
-    } catch (error) {
-      console.error("댓글 삭제 오류:", error);
-    }
-  };
-
-  // 댓글 좋아요 (댓글에서 볼 수 있음 (renderComments))
-  const likeComment = async (id: Comment["id"], postId: Post["id"]) => {
-    const targetComment = comments[postId].find((c) => c.id === id);
-    if (!targetComment) return;
-
-    try {
-      const data = await likeCommentApi(id, targetComment);
-      setComments((prev) => ({
-        ...prev,
-        [postId]: prev[postId].map((comment) =>
-          comment.id === data.id ? { ...data, likes: comment.likes + 1 } : comment,
-        ),
-      }));
-    } catch (error) {
-      console.error("댓글 좋아요 오류:", error);
-    }
-  };
-
+  //side effects
   useEffect(() => {
     fetchTags();
   }, []);

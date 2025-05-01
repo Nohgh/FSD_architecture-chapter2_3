@@ -1,6 +1,6 @@
 import { Table } from "@/shared/ui";
-import PostTableHeader from "./PostTableHeader";
-import PostTableBody from "./PostTableBody";
+import PostTableHeader from "@/features/post/ui/PostTableHeader";
+import PostTableBody from "@/features/post/ui/PostTableBody";
 
 const PostTable = () => {
   return (

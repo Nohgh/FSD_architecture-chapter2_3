@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Edit2, Plus, Search, ThumbsUp, Trash2 } from "lucide-react";
 import {
   Button,
@@ -16,15 +16,12 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-  Table,
   Textarea,
 } from "../shared/ui";
 import HighlightText from "@/shared/ui/HighLightText";
 import { Post } from "@/entities/post/model/post.types";
-import { Comment, NewComment } from "@/entities/comment/model/comment.type";
+import { Comment } from "@/entities/comment/model/comment.type";
 import { addCommentApi, deleteCommentApi, likeCommentApi, updateCommentApi } from "@/entities/comment/api";
-import PostTableHeader from "@/features/post/ui/PostTableHeader";
-import PostTableBody from "@/features/post/ui/PostTableBody";
 import useUrl from "@/shared/lib/useUrl";
 import { useModalStore } from "@/shared/model/useModalStore";
 import useLoadingStore from "@/features/post/model/useLoadingStore";
@@ -38,13 +35,9 @@ import useSearchPosts from "@/features/post/model/useSearchPosts";
 import useFetchPostsByTag from "@/features/post/model/useFetchPostsByTag";
 import useUpdatePost from "@/features/post/model/useUpdatePost";
 import useAddPosts from "@/features/post/model/useAddPosts";
-import PostTable from "@/features/post/ui/PostTable";
+import PostTable from "@/widgets/post/ui/PostTable";
 
 const PostsManager = () => {
-  //TODO:
-  const [selectedComment, setSelectedComment] = useState<Comment | null>(null);
-  const [newComment, setNewComment] = useState<NewComment>({ body: "", postId: null, userId: 1 });
-
   const {
     total,
     skip,
@@ -53,7 +46,6 @@ const PostsManager = () => {
     sortBy,
     sortOrder,
     selectedTag,
-    // setTotal,
     setSkip,
     setLimit,
     updateURL,
@@ -66,7 +58,7 @@ const PostsManager = () => {
   const { loading } = useLoadingStore();
   const { selectedPost, newPost, setSelectedPost, setNewPost } = usePostStore();
   const { tags } = useTagStore();
-  const { comments, setComments } = useCommentStore();
+  const { comments, selectedComment, newComment, setComments, setSelectedComment, setNewComment } = useCommentStore();
   const { selectedUser } = useUserStore();
 
   const {

@@ -1,18 +1,24 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deletePostApi } from "@/entities/post/api";
 import usePostStore from "./usePostStore";
 
 const useDeletePost = () => {
-  const { posts, setPosts } = usePostStore.getState();
+  const { posts, setPosts } = usePostStore();
+  const queryClient = useQueryClient();
 
-  const deletePost = async (id: number) => {
-    try {
-      await deletePostApi(id);
+  const { mutate: deletePost } = useMutation({
+    mutationFn: (id: number) => deletePostApi(id),
 
+    onSuccess: (_, id) => {
       setPosts(posts.filter((post) => post.id !== id));
-    } catch (error) {
+
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+    },
+
+    onError: (error) => {
       console.error("게시물 삭제 오류:", error);
-    }
-  };
+    },
+  });
 
   return { deletePost };
 };

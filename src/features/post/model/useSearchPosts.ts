@@ -1,3 +1,4 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import useQueryParams from "@/shared/lib/useQueryParams";
 import useFetchPosts from "./useFetchPosts";
 import useLoadingStore from "./useLoadingStore";
@@ -9,25 +10,34 @@ const useSearchPosts = () => {
   const { fetchPosts } = useFetchPosts();
   const { setLoading } = useLoadingStore();
   const { setPosts } = usePostStore();
+  const queryClient = useQueryClient();
 
-  const searchPosts = async (searchQuery: string) => {
-    if (!searchQuery) {
-      console.log("searchQuery", searchQuery);
-      console.log("return");
-      fetchPosts();
-      return;
-    }
-    setLoading(true);
-    try {
-      const response = await searchPostApi(searchQuery);
+  const { mutate: searchPosts } = useMutation({
+    mutationFn: async (searchQuery: string) => {
+      if (!searchQuery) {
+        fetchPosts();
+        return;
+      }
+      setLoading(true);
+      try {
+        const response = await searchPostApi(searchQuery);
+        setPosts(response.posts);
+        setTotal(response.total);
+      } catch (error) {
+        console.error("게시물 검색 오류:", error);
+      } finally {
+        setLoading(false);
+      }
+    },
 
-      setPosts(response.posts);
-      setTotal(response.total);
-    } catch (error) {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+    },
+
+    onError: (error) => {
       console.error("게시물 검색 오류:", error);
-    }
-    setLoading(false);
-  };
+    },
+  });
 
   return { searchPosts };
 };

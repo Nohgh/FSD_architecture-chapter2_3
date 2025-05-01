@@ -26,7 +26,7 @@ const EditPostModal = () => {
             value={selectedPost?.body || ""}
             onChange={(e) => setSelectedPost((prev) => (prev ? { ...prev, body: e.target.value } : null))}
           />
-          <Button onClick={updatePost}>게시물 업데이트</Button>
+          <Button onClick={() => updatePost}>게시물 업데이트</Button>
         </div>
       </DialogContent>
     </Dialog>

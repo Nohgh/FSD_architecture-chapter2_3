@@ -20,7 +20,7 @@ const EditCommentModal = () => {
             value={selectedComment?.body || ""}
             onChange={(e) => setSelectedComment((prev) => (prev ? { ...prev, body: e.target.value } : null))}
           />
-          <Button onClick={updateComment}>댓글 업데이트</Button>
+          <Button onClick={() => updateComment}>댓글 업데이트</Button>
         </div>
       </DialogContent>
     </Dialog>

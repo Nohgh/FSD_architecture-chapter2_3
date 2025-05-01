@@ -40,7 +40,7 @@ const CommentContent = ({ postId }: { postId: Post["id"] }) => {
             >
               <Edit2 className="w-3 h-3" />
             </Button>
-            <Button variant="ghost" size="sm" onClick={() => deleteComment(comment.id, postId)}>
+            <Button variant="ghost" size="sm" onClick={() => deleteComment(comment.id)}>
               <Trash2 className="w-3 h-3" />
             </Button>
           </div>

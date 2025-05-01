@@ -1,7 +1,8 @@
+import { API } from "@/shared/lib/apiMode";
 import { User } from "../model/user.types";
 
 const fetchUser = async () => {
-  const response = await fetch("/api/users?limit=0&select=username,image");
+  const response = await fetch(`${API}/users?limit=0&select=username,image`);
 
   if (!response.ok) {
     console.error("searchPost Error");
@@ -11,7 +12,7 @@ const fetchUser = async () => {
 };
 
 const fetchUserById = async (user: User) => {
-  const response = await fetch(`/api/users/${user.id}`);
+  const response = await fetch(`${API}/users/${user.id}`);
 
   if (!response.ok) {
     console.error("searchPost Error");

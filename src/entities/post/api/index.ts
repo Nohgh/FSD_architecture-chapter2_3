@@ -1,7 +1,8 @@
+import { API } from "@/shared/lib/apiMode";
 import { NewPost, Post, PostRequest } from "../model/post.types";
 
 const addPostApi = async (newPost: NewPost) => {
-  const response = await fetch("/api/posts/add", {
+  const response = await fetch(`${API}/posts/add`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(newPost),
@@ -15,7 +16,7 @@ const addPostApi = async (newPost: NewPost) => {
 };
 
 const getPostApi = async (limit: number, skip: number): Promise<PostRequest> => {
-  const response = await fetch(`/api/posts?limit=${limit}&skip=${skip}`);
+  const response = await fetch(`${API}/posts?limit=${limit}&skip=${skip}`);
 
   if (!response.ok) {
     console.error("getPost Error");
@@ -25,7 +26,7 @@ const getPostApi = async (limit: number, skip: number): Promise<PostRequest> => 
 };
 
 const searchPostApi = async (searchQuery: string): Promise<PostRequest> => {
-  const response = await fetch(`/api/posts/search?q=${searchQuery}`);
+  const response = await fetch(`${API}/posts/search?q=${searchQuery}`);
 
   if (!response.ok) {
     console.error("searchPost Error");
@@ -35,7 +36,7 @@ const searchPostApi = async (searchQuery: string): Promise<PostRequest> => {
 };
 
 const updatePostApi = async (selectedPost: Post | null) => {
-  const response = await fetch(`/api/posts/${selectedPost?.id}`, {
+  const response = await fetch(`${API}/posts/${selectedPost?.id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(selectedPost),
@@ -49,13 +50,13 @@ const updatePostApi = async (selectedPost: Post | null) => {
 };
 
 const deletePostApi = async (id: number) => {
-  await fetch(`/api/posts/${id}`, {
+  await fetch(`${API}/posts/${id}`, {
     method: "DELETE",
   });
 };
 
 const fetchPostsByTagApi = async (tag: string) => {
-  const response = await fetch(`/api/posts/tag/${tag}`);
+  const response = await fetch(`${API}/posts/tag/${tag}`);
   if (!response.ok) {
     console.error("searchPost Error");
   }

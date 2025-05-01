@@ -15,7 +15,8 @@ const useDeleteComment = () => {
       setComments((prev) => {
         const updatedComments = { ...prev };
 
-        Object.keys(updatedComments).forEach((postId) => {
+        Object.keys(updatedComments).forEach((postIdStr) => {
+          const postId = Number(postIdStr);
           updatedComments[postId] = updatedComments[postId].filter((comment) => comment.id !== id);
         });
 

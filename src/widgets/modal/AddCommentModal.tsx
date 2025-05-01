@@ -20,7 +20,7 @@ const AddCommentModal = () => {
             value={newComment.body}
             onChange={(e) => setNewComment({ ...newComment, body: e.target.value })}
           />
-          <Button onClick={addComment}>댓글 추가</Button>
+          <Button onClick={() => addComment}>댓글 추가</Button>
         </div>
       </DialogContent>
     </Dialog>

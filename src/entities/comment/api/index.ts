@@ -1,7 +1,8 @@
+import { API } from "@/shared/lib/apiMode";
 import { Comment, FetchComment, NewComment } from "../model/comment.type";
 
 const fetchCommentsApi = async (postId: number): Promise<FetchComment> => {
-  const response = await fetch(`/api/comments/post/${postId}`);
+  const response = await fetch(`${API}/comments/post/${postId}`);
 
   if (!response.ok) {
     console.error("searchPost Error");
@@ -11,7 +12,7 @@ const fetchCommentsApi = async (postId: number): Promise<FetchComment> => {
 };
 
 const addCommentApi = async (newComment: NewComment) => {
-  const response = await fetch("/api/comments/add", {
+  const response = await fetch(`${API}/comments/add`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(newComment),
@@ -25,7 +26,7 @@ const addCommentApi = async (newComment: NewComment) => {
 };
 
 const updateCommentApi = async (selectedComment: Comment | null) => {
-  const response = await fetch(`/api/comments/${selectedComment?.id}`, {
+  const response = await fetch(`${API}/comments/${selectedComment?.id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ body: selectedComment?.body }),
@@ -39,13 +40,13 @@ const updateCommentApi = async (selectedComment: Comment | null) => {
 };
 
 const deleteCommentApi = async (id: number) => {
-  await fetch(`/api/comments/${id}`, {
+  await fetch(`${API}/comments/${id}`, {
     method: "DELETE",
   });
 };
 
 const likeCommentApi = async (id: number, targetComment: Comment) => {
-  const response = await fetch(`/api/comments/${id}`, {
+  const response = await fetch(`${API}/comments/${id}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ likes: targetComment.likes + 1 }),

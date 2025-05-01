@@ -9,11 +9,6 @@ import {
   DialogHeader,
   DialogTitle,
   Input,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
   Textarea,
 } from "../shared/ui";
 import HighlightText from "@/shared/ui/HighLightText";
@@ -39,7 +34,7 @@ import PostFilter from "@/features/post/ui/PostFilter";
 import PostPageNations from "@/features/post/ui/PostPageNations";
 
 const PostsManager = () => {
-  const { total, skip, limit, searchQuery, sortBy, sortOrder, selectedTag, setSkip, setLimit, updateURL } = useUrl();
+  const { skip, limit, searchQuery, sortBy, sortOrder, selectedTag, updateURL } = useUrl();
 
   const { loading } = useLoadingStore();
   const { selectedPost, newPost, setSelectedPost, setNewPost } = usePostStore();

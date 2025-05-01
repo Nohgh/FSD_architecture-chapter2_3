@@ -11,7 +11,6 @@ import {
   Textarea,
 } from "../shared/ui";
 import HighlightText from "@/shared/ui/HighLightText";
-import { Post } from "@/entities/post/model/post.types";
 import useUrl from "@/shared/lib/useUrl";
 import { useModalStore } from "@/shared/model/useModalStore";
 import useLoadingStore from "@/features/post/model/useLoadingStore";
@@ -31,8 +30,7 @@ import PostFilter from "@/features/post/ui/PostFilter";
 import PostPageNations from "@/features/post/ui/PostPageNations";
 import useAddComment from "@/features/commnet/model/useAddComment";
 import useUpdateComments from "@/features/commnet/model/useUpdateComment";
-import CommentHeader from "@/features/commnet/ui/CommentHeader";
-import CommentContent from "@/features/commnet/ui/CommentContent";
+import Comment from "@/widgets/comment/ui/Comment";
 
 const PostsManager = () => {
   //lib
@@ -85,14 +83,6 @@ const PostsManager = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [skip, limit, sortBy, sortOrder, selectedTag]);
 
-  //Comment
-  const renderComments = (postId: Post["id"]) => (
-    <div className="mt-2">
-      <CommentHeader postId={postId} />
-      <CommentContent postId={postId} />
-    </div>
-  );
-
   return (
     <Card className="w-full max-w-6xl mx-auto">
       <PostHeader />
@@ -136,6 +126,7 @@ const PostsManager = () => {
           </div>
         </DialogContent>
       </Dialog>
+
       {/* 게시물 수정 대화상자 */}
       <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
         <DialogContent>
@@ -158,6 +149,7 @@ const PostsManager = () => {
           </div>
         </DialogContent>
       </Dialog>
+
       {/* 댓글 추가 대화상자 */}
       <Dialog open={showAddCommentDialog} onOpenChange={setShowAddCommentDialog}>
         <DialogContent>
@@ -174,6 +166,7 @@ const PostsManager = () => {
           </div>
         </DialogContent>
       </Dialog>
+
       {/* 댓글 수정 대화상자 */}
       <Dialog open={showEditCommentDialog} onOpenChange={setShowEditCommentDialog}>
         <DialogContent>
@@ -190,6 +183,7 @@ const PostsManager = () => {
           </div>
         </DialogContent>
       </Dialog>
+
       {/* 게시물 상세 보기 대화상자 */}
       <Dialog open={showPostDetailDialog} onOpenChange={setShowPostDetailDialog}>
         <DialogContent className="max-w-3xl">
@@ -202,11 +196,11 @@ const PostsManager = () => {
             <p>
               <HighlightText text={selectedPost?.body || ""} highlight={searchQuery} />
             </p>
-
-            {renderComments(selectedPost?.id || 0)}
+            <Comment postId={selectedPost?.id || 0} />
           </div>
         </DialogContent>
       </Dialog>
+
       {/* 사용자 모달 */}
       <Dialog open={showUserDialog} onOpenChange={setShowUserDialog}>
         <DialogContent className="max-w-3xl">

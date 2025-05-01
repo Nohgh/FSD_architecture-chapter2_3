@@ -1,8 +1,8 @@
 import { Button } from "@/shared/ui";
 import { Plus } from "lucide-react";
-import useCommentStore from "../model/useCommentsStore";
-import { Post } from "@/entities/post/model/post.types";
 import { useModalStore } from "@/shared/model/useModalStore";
+import { Post } from "@/entities/post/model/post.types";
+import useCommentStore from "../model/useCommentsStore";
 
 const CommentHeader = ({ postId }: { postId: Post["id"] }) => {
   const { setNewComment } = useCommentStore();

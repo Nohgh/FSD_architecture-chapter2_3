@@ -1,11 +1,11 @@
-import { Post } from "@/entities/post/model/post.types";
-import useCommentStore from "../model/useCommentsStore";
-import HighlightText from "@/shared/ui/HighLightText";
-import useUrl from "@/shared/lib/useUrl";
-import useLikeComment from "../model/useLikeComment";
 import { Button } from "@/shared/ui";
 import { Edit2, ThumbsUp, Trash2 } from "lucide-react";
+import { Post } from "@/entities/post/model/post.types";
+import useUrl from "@/shared/lib/useUrl";
+import HighlightText from "@/shared/ui/HighLightText";
 import { useModalStore } from "@/shared/model/useModalStore";
+import useLikeComment from "../model/useLikeComment";
+import useCommentStore from "../model/useCommentsStore";
 import useDeleteComment from "../model/useDeleteComment";
 
 const CommentContent = ({ postId }: { postId: Post["id"] }) => {

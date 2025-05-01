@@ -1,7 +1,6 @@
 import { deletePostApi } from "@/entities/post/api";
 import usePostStore from "./usePostStore";
 
-// 게시물 삭제 (삭제버튼 클릭시)
 const useDeletePost = () => {
   const { posts, setPosts } = usePostStore.getState();
 

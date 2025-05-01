@@ -7,7 +7,6 @@ import useFetchPosts from "./useFetchPosts";
 import useLoadingStore from "./useLoadingStore";
 import usePostStore from "./usePostStore";
 
-// 태그별 게시물 가져오기 (태그 선택시 실행)
 const useFetchPostsByTag = () => {
   const { fetchPosts } = useFetchPosts();
   const { setLoading } = useLoadingStore();

@@ -4,7 +4,6 @@ import useLoadingStore from "./useLoadingStore";
 import { searchPostApi } from "@/entities/post/api";
 import usePostStore from "./usePostStore";
 
-// 게시물 검색
 const useSearchPosts = () => {
   const { setTotal } = useQueryParams();
   const { fetchPosts } = useFetchPosts();

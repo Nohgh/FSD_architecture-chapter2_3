@@ -38,6 +38,7 @@ import useSearchPosts from "@/features/post/model/useSearchPosts";
 import useFetchPostsByTag from "@/features/post/model/useFetchPostsByTag";
 import useUpdatePost from "@/features/post/model/useUpdatePost";
 import useAddPosts from "@/features/post/model/useAddPosts";
+import PostTable from "@/features/post/ui/PostTable";
 
 const PostsManager = () => {
   //TODO:
@@ -166,14 +167,6 @@ const PostsManager = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [skip, limit, sortBy, sortOrder, selectedTag]);
 
-  // 게시물 테이블 렌더링 (로딩 여부에 따라 실행)
-  const renderPostTable = () => (
-    <Table>
-      <PostTableHeader />
-      <PostTableBody />
-    </Table>
-  );
-
   // 댓글 렌더링 (게시물 상세 보기 대화상자에서 렌더링)
   const renderComments = (postId: Post["id"]) => (
     <div className="mt-2">
@@ -294,7 +287,7 @@ const PostsManager = () => {
           </div>
 
           {/* 게시물 테이블 */}
-          {loading ? <div className="flex justify-center p-4">로딩 중...</div> : renderPostTable()}
+          {loading ? <div className="flex justify-center p-4">로딩 중...</div> : <PostTable />}
 
           {/* 페이지네이션 */}
           <div className="flex justify-between items-center">

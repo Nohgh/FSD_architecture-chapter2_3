@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { updateCommentApi } from "@/entities/comment/api";
-import useCommentStore from "./useCommentsStore";
 import { useModalStore } from "@/shared/model/useModalStore";
+import useCommentStore from "./useCommentsStore";
 
 const useUpdateComments = () => {
   const { setComments, selectedComment } = useCommentStore();

@@ -22,7 +22,7 @@ import useFetchTag from "@/features/post/model/useFetchTag";
 import useFetchPostsByTag from "@/features/post/model/useFetchPostsByTag";
 import useUpdatePost from "@/features/post/model/useUpdatePost";
 import useAddPosts from "@/features/post/model/useAddPosts";
-import PostTable from "@/widgets/post/ui/PostTable";
+import PostTable from "@/widgets/post/PostTable";
 import Loading from "@/shared/ui/Loading";
 import PostHeader from "@/features/post/ui/PostHeader";
 import PostSearch from "@/features/post/ui/PostSearch";
@@ -30,7 +30,7 @@ import PostFilter from "@/features/post/ui/PostFilter";
 import PostPageNations from "@/features/post/ui/PostPageNations";
 import useAddComment from "@/features/commnet/model/useAddComment";
 import useUpdateComments from "@/features/commnet/model/useUpdateComment";
-import Comment from "@/widgets/comment/ui/Comment";
+import Comment from "@/widgets/comment/Comment";
 
 const PostsManager = () => {
   //lib
@@ -98,7 +98,8 @@ const PostsManager = () => {
           <PostPageNations />
         </div>
       </CardContent>
-      {/* 게시물 추가 대화상자 */}
+
+      {/* AddPostModal */}
       <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
         <DialogContent>
           <DialogHeader>
@@ -127,7 +128,7 @@ const PostsManager = () => {
         </DialogContent>
       </Dialog>
 
-      {/* 게시물 수정 대화상자 */}
+      {/* EditPostModal */}
       <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
         <DialogContent>
           <DialogHeader>
@@ -150,7 +151,7 @@ const PostsManager = () => {
         </DialogContent>
       </Dialog>
 
-      {/* 댓글 추가 대화상자 */}
+      {/* AddCommentModal */}
       <Dialog open={showAddCommentDialog} onOpenChange={setShowAddCommentDialog}>
         <DialogContent>
           <DialogHeader>
@@ -167,7 +168,7 @@ const PostsManager = () => {
         </DialogContent>
       </Dialog>
 
-      {/* 댓글 수정 대화상자 */}
+      {/* EditCommentModal */}
       <Dialog open={showEditCommentDialog} onOpenChange={setShowEditCommentDialog}>
         <DialogContent>
           <DialogHeader>
@@ -184,7 +185,7 @@ const PostsManager = () => {
         </DialogContent>
       </Dialog>
 
-      {/* 게시물 상세 보기 대화상자 */}
+      {/* PostDetailModal */}
       <Dialog open={showPostDetailDialog} onOpenChange={setShowPostDetailDialog}>
         <DialogContent className="max-w-3xl">
           <DialogHeader>
@@ -201,7 +202,7 @@ const PostsManager = () => {
         </DialogContent>
       </Dialog>
 
-      {/* 사용자 모달 */}
+      {/* UserModal */}
       <Dialog open={showUserDialog} onOpenChange={setShowUserDialog}>
         <DialogContent className="max-w-3xl">
           <DialogHeader>
